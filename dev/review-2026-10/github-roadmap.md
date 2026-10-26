@@ -30,7 +30,7 @@ Starting state (2026-10-08):
 
 ✔ Both repos clean and pushed; inventory of settings and issues saved locally.
 
-## Phase 1: Check and configure the existing WignerQuantumOptics organization (nothing is created)
+## Phase 1: Check and configure the existing WignerQuantumOptics organization (nothing is created) — done 2026-10-22
 1. ~~**[A]** Check these organization settings and adjust only where they differ:~~ Done 2026-10-20.
    - require 2FA: already on
    - base member permission: Read (changed from Write; no member lost write access)
@@ -43,14 +43,14 @@ Starting state (2026-10-08):
    - no "Roadmap item" field (it would duplicate the milestones)
    - built-in workflows reviewed and kept; auto-add is switched on after the transfer (Phase 2, step 6)
    - Priority and Effort: decided 2026-10-21, the organization issue fields (as Wigner_Time), set on each issue in Phase 4; added to the Project as fields 2026-10-22 (`createProjectV2IssueField`)
-4. If you want to double-check, ask IBF whether institute-branded code under the group's organization needs anything. I don't expect it to; GitHub is already in use.
+4. ~~If you want to double-check, ask IBF whether institute-branded code under the group's organization needs anything.~~ Done: IBF had no comments (András, 2026-10-26).
 
 ✔ Org ready; a test repo created in it shows the expected Actions and Pages behaviour (then delete it).
 
 ## Phase 2: Transfer — done 2026-10-21
 1. ~~**[A]** Transfer `cppqed-multidiagonal` first (it's the dependency), then `cppqed`. In each repo: Settings → Danger Zone → Transfer.~~ Done 2026-10-21; pushing to the new URLs works. The Phase 1 test-repo checkpoint was skipped in favour of transferring directly.
 2. **[A]** Never create a repo named `cppqed` or `cppqed-multidiagonal` under `vukics` again; that would break the redirects.
-3. ~~**[A]** Point local clones at the new URLs with `git remote set-url origin git@github.com:WignerQuantumOptics/<repo>.git`~~, done for both local checkouts 2026-10-21; **still to do in the cluster checkouts** (they work through the redirect until then).
+3. ~~**[A]** Point local clones at the new URLs with `git remote set-url origin git@github.com:WignerQuantumOptics/<repo>.git`~~, done for both local checkouts 2026-10-21; cluster checkouts done too (András, 2026-10-26) (they work through the redirect until then).
 4. ~~**[A]** Zenodo: enable the library repo under the organization in Zenodo's GitHub settings.~~ Not applicable: Zenodo was never connected (corrected 2026-10-21).
 5. ~~**[A]** Archive the three forks under `vukics` (archive, don't delete: old `.gitmodules` reference them).~~ Done 2026-10-21.
 6. ~~**[A]** In the "C++QED v3" Project, switch on the built-in "Auto-add to project" workflow for the transferred repos (filter `is:issue is:open`).~~ Done 2026-10-21 for cppqed only: the plan allows one auto-add workflow. Pull requests deliberately not auto-added (direct commits to the default branch; "Fixes #N" closes issues). For the library: issue templates `bug.yml` and `other.yml` with `projects:` pointing at the Project, blank issues disabled (library commit after 6dc2567; the Project is number 1). The Phase 4 script adds its issues itself.
@@ -123,7 +123,7 @@ Starting state (2026-10-08):
 ## Phase 6: Steady state
 - Every fix references its issue, and the regression and physics tests grow with each fix.
 - From here the issue order follows the milestones: M1 (correct QJMC: C-20 tolerances, C-21 H_eff, C-23 SliceIterator, C-40/41 run safety) → M2 (Master restored, Bloch test) → M3 (propagators).
-- Ledger rule (written into the library CLAUDE.md 2026-10-15): the F-series is closed; new findings = GitHub issue numbers, cited in test names and commits. Add the same rule to cppqed's CLAUDE.md once its test suite exists.
+- Ledger rule (written into the library CLAUDE.md 2026-10-15): the F-series is closed; new findings = GitHub issue numbers, cited in test names and commits. Added to cppqed's CLAUDE.md (Testing) 2026-10-24, together with its test suite.
 
 ---
 
