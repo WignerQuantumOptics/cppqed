@@ -87,7 +87,7 @@ Starting state (2026-10-08):
 
 ✔ Every inventory item maps to exactly one GitHub issue; the epics show their children; the Project views (by milestone, by severity, cross-repo blockers) are populated.
 
-## Phase 5: CI working (each change closes the matching issues via "Fixes #N") — done 2026-10-26 except the optional ruleset (step 7)
+## Phase 5: CI working (each change closes the matching issues via "Fixes #N") — done 2026-10-26
 **Library** (already has CI; make it strict):
 1. ~~**[C]** Fix:~~ Done 2026-10-24 (library #3, #4 closed; the warnings under #10).
    - the Clang warnings (M-10)
@@ -116,7 +116,7 @@ Starting state (2026-10-08):
    - a regression job comparing `jc_qjmc` output against a stored reference (C-05)
    CI must be green before merging.
 6. ~~**[C]** Fix the ODR problems (C-50), so a Catch2 test target can be added (C-51). From then on, CI runs `ctest`.~~ Done 2026-10-24 (#51, #23 closed; #52 stays open for the physics tests). New finding: Qbit σz has the opposite sign of spin::sz → #87 (convention decision, `[!mayfail]` test).
-7. **[A]** Optional, when CI is stable: a ruleset on `v3/dev` / `main` that requires the CI checks.
+7. ~~**[A]** Optional, when CI is stable: a ruleset on `v3/dev` / `main` that requires the CI checks.~~ 2026-10-26: rulesets that block force-pushes and deletion on both default branches (no bypass). Required checks and pull requests come later, tracked in #88.
 
 ✔ Both repos green on the default branch; cppqed builds against the library at a pinned SHA; the README CI badges show passing.
 
