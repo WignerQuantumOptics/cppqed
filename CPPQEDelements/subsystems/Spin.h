@@ -16,6 +16,10 @@ using namespace ::quantumdynamics;
 using MultiDiagonal = ::quantumoperator::MultiDiagonal<1> ;
 
 
+/// @brief Spin-s operators on the basis index i = m + s, i.e. the number of quanta above m = −s.
+/// This is the Holstein–Primakoff map onto a harmonic-oscillator mode with i = n:
+/// S_z = n − s, S⁺ = a†√(2s − a†a), S⁻ = √(2s − a†a) a, so S⁻ ≈ √(2s) a for large s, with `mode::aOp`.
+/// S⁺ raises m, so it is the lower diagonal (offset −1). Spin ½ coincides with `qbit::multidiagonal`.
 MultiDiagonal splus(size_t twoS, size_t dim=0);
 
 MultiDiagonal sminus(size_t twoS, size_t dim=0);

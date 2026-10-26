@@ -51,26 +51,25 @@ TEST_CASE("Mode: a, a† and n are the truncated ladder and number operators —
 }
 
 
-TEST_CASE("Qbit: σ⁺ = |1⟩⟨0| raises, σ⁻ lowers, σx and σy as their combinations — #23", "[qbit][operators]")
+TEST_CASE("Qbit: σ⁺ = |1⟩⟨0| raises, σ⁻ lowers, σx and σy as their combinations, σz = diag(−½,+½) — #23, #87", "[qbit][operators]")
 {
-  CMatrix sp{CMatrix::Zero(2,2)}; sp(1,0)=1.;
+  CMatrix sp{CMatrix::Zero(2,2)}, sz{CMatrix::Zero(2,2)}; sp(1,0)=1.; sz(0,0)=-.5; sz(1,1)=.5;
   const CMatrix sm=sp.adjoint();
 
   CHECK(approxEqual(densify(qbit::multidiagonal::splus()), sp));
   CHECK(approxEqual(densify(qbit::multidiagonal::sminus()), sm));
   CHECK(approxEqual(densify(qbit::multidiagonal::sx()), ((sp+sm)/2.).eval()));
   CHECK(approxEqual(densify(qbit::multidiagonal::sy()), ((sp-sm)/2i).eval()));
-
-  const CMatrix sz=densify(qbit::multidiagonal::sz());   // diagonal with entries ±1/2; the sign is #87
-  CHECK(approxEqual(sz, CMatrix(sz.diagonal().asDiagonal())));
-  CHECK(approxEqual(sz*sz, (CMatrix::Identity(2,2)/4.).eval()));
+  CHECK(approxEqual(densify(qbit::multidiagonal::sz()), sz));
 }
 
 
-TEST_CASE("Qbit: [σz, σ⁺] = σ⁺ — #87", "[qbit][operators][!mayfail]")
+TEST_CASE("Qbit: [σz, σ⁺] = σ⁺, and the qubit is spin ½ — #87", "[qbit][spin][operators]")
 {
   const CMatrix sz=densify(qbit::multidiagonal::sz()), sp=densify(qbit::multidiagonal::splus());
   CHECK(approxEqual(commutator(sz,sp), sp));
+  CHECK(approxEqual(sz, densify(spin::sz(1))));
+  CHECK(approxEqual(sp, densify(spin::splus(1))));
 }
 
 
@@ -90,5 +89,19 @@ TEST_CASE("Spin: S⁺ and Sz match |s,m⟩ matrix elements; [Sz,S±] = ±S± —
     CHECK(approxEqual(densify(spin::sminus(twoS)), sp.adjoint()));
     CHECK(approxEqual(densify(spin::sz(twoS)), sz));
     CHECK(approxEqual(commutator(sz,sp), sp));
+  }
+}
+
+
+TEST_CASE("Spin: Holstein–Primakoff onto the mode, S_z = n − s and S⁻ = √(2s − a†a) a — #87", "[spin][mode][operators]")
+{
+  for (size_t twoS : {1uz, 2uz, 5uz}) {
+    const size_t dim=twoS+1;                                              // the mode truncated at 2s+1 quanta
+    const CMatrix a=densify(mode::aOp(dim)), n=densify(mode::nOp(dim)), one=CMatrix::Identity(dim,dim);
+    const CMatrix root=(twoS*one-n).cwiseSqrt();                         // √(2s − a†a): diagonal, entries ≥ 0
+    CAPTURE(twoS);
+    CHECK(approxEqual(densify(spin::sz(twoS)), (n-(twoS/2.)*one).eval()));
+    CHECK(approxEqual(densify(spin::sminus(twoS)), (root*a).eval()));
+    CHECK(approxEqual(densify(spin::splus(twoS)), (a.adjoint()*root).eval()));
   }
 }

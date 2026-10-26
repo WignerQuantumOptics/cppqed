@@ -107,6 +107,8 @@ inline auto make(const Pars& p)
 /**
  * TODO: define qbit operators as Sigmas, and define composition of MultiDiagonal with Sigma
  */
+/// @brief Spin-½ operators, in the convention of `spin` for 2s = 1: |0⟩ is down, |1⟩ is up (excited), so
+/// σ⁺ = |1⟩⟨0| is the lower diagonal and σz = diag(−½, +½); `sz()` and `spin::sz(1)` agree.
 namespace multidiagonal {
 
 using namespace ::quantumdynamics;
