@@ -1,6 +1,8 @@
 # C++QED v3
 
 [![CI](https://github.com/WignerQuantumOptics/cppqed/actions/workflows/ci.yml/badge.svg)](https://github.com/WignerQuantumOptics/cppqed/actions/workflows/ci.yml)
+[![Documentation](https://img.shields.io/badge/docs-github.io-blue)](https://wignerquantumoptics.github.io/cppqed/)
+[![License](https://img.shields.io/badge/license-BSL--1.0-green)](LICENSE.txt)
 
 **A C++20 framework for high-performance simulation of open quantum dynamics**
 
