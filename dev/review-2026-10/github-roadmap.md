@@ -87,7 +87,7 @@ Starting state (2026-10-08):
 
 ✔ Every inventory item maps to exactly one GitHub issue; the epics show their children; the Project views (by milestone, by severity, cross-repo blockers) are populated.
 
-## Phase 5: CI working (each change closes the matching issues via "Fixes #N") — done 2026-10-24 except the [A] items (release, ruleset)
+## Phase 5: CI working (each change closes the matching issues via "Fixes #N") — done 2026-10-26 except the optional ruleset (step 7)
 **Library** (already has CI; make it strict):
 1. ~~**[C]** Fix:~~ Done 2026-10-24 (library #3, #4 closed; the warnings under #10).
    - the Clang warnings (M-10)
@@ -100,7 +100,7 @@ Starting state (2026-10-08):
    - `apt-get update` in `docs.yml`
    - pin `runs-on: ubuntu-24.04` instead of `ubuntu-latest`
    - pin actions by SHA
-3. ~~**[C]** Move the headers to `include/multidiagonal/` (M-01).~~ Done 2026-10-24 (#2 closed, f8492fd). Release v0.3.0 **[A tag/release]**: still open; the CMake version still says 0.2.0, and the v0.3.0 milestone still holds #1, #5, #9, #11 (and v0.2.1 holds #6–#8, #12, #13), so decide what the release contains. If you want a DOI for it (e.g. for the paper), connect Zenodo before this release; it then mints one per release.
+3. ~~**[C]** Move the headers to `include/multidiagonal/` (M-01).~~ Done 2026-10-24 (#2 closed, f8492fd). ~~Release v0.3.0 **[A tag/release]**~~: released 2026-10-26 by Claude (versioning delegated by András): tag v0.3.0 at fd468e8 plus a GitHub release; milestones rearranged (v0.2.1 → v0.3.1 for the open doc/header items, the open v0.3.0 items → v0.4.0); cppqed pinned to the release commit.
 
 **cppqed** (no CI yet):
 4. ~~**[C]** Track `jc_qjmc.cc` (C-52/C-74). Add `ci.yml`:~~ Done 2026-10-24 (ddb9df71; green baseline on gcc-13/14, clang-18 × Debug/Release). Also fixed: the version banner still printed the `vukics` URL.
