@@ -100,7 +100,7 @@ Starting state (2026-10-08):
    - `apt-get update` in `docs.yml`
    - pin `runs-on: ubuntu-24.04` instead of `ubuntu-latest`
    - pin actions by SHA
-3. ~~**[C]** Move the headers to `include/multidiagonal/` (M-01).~~ Done 2026-10-24 (#2 closed, f8492fd). ~~Release v0.3.0 **[A tag/release]**~~: released 2026-10-26 by Claude (versioning delegated by András): tag v0.3.0 at fd468e8 plus a GitHub release; milestones rearranged (v0.2.1 → v0.3.1 for the open doc/header items, the open v0.3.0 items → v0.4.0); cppqed pinned to the release commit.
+3. ~~**[C]** Move the headers to `include/multidiagonal/` (M-01).~~ Done 2026-10-24 (#2 closed, f8492fd). ~~Release v0.3.0 **[A tag/release]**~~: released 2026-10-26 by Claude (versioning delegated by András): tag v0.3.0 at fd468e8 plus a GitHub release; milestones rearranged (v0.2.1 → v0.3.1 for the open doc/header items, the open v0.3.0 items → v0.4.0); cppqed pinned to the release commit. Re-versioned 2026-10-27: renaming the misnamed `twoTimesImagPartOf` (library #22) makes the doc/header sweep breaking, so v0.3.1 → v0.4.0 and the previous v0.4.0 → v0.5.0.
 
 **cppqed** (no CI yet):
 4. ~~**[C]** Track `jc_qjmc.cc` (C-52/C-74). Add `ci.yml`:~~ Done 2026-10-24 (ddb9df71; green baseline on gcc-13/14, clang-18 × Debug/Release). Also fixed: the version banner still printed the `vukics` URL.
