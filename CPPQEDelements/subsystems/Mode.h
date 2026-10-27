@@ -62,7 +62,7 @@ Lindblad<1> photonLoss(double kappa, double nTh);
 Lindblad<1> photonGain(double kappa, double nTh);
 
 
-static constexpr auto expectationValues = [] (lazy_density_operator<1> auto rho)
+inline constexpr auto expectationValues = [] (lazy_density_operator<1> auto rho)
 {
   double pn=0, pnn=0; dcomp a=0;
   for (size_t n=1; n<rho.extents[0]; ++n) {
@@ -159,7 +159,7 @@ Lindblad<1> gain(double gamma_p) {return {"gain", sigmaPlusJump(gamma_p), sigmaP
 // Lindblad<1> dephasing(double gamma_phi) {return {"dephasing", sigma_zJump(gamma_phi), sigma_zRate(gamma_phi), sigma_zSuperoperator(gamma_phi)};}
 
 
-static constexpr auto expectationValues = [] (lazy_density_operator<1> auto rho) { return hana::make_tuple(real(_(rho,0,0)),_(rho,0,1)); };
+inline constexpr auto expectationValues = [] (lazy_density_operator<1> auto rho) { return hana::make_tuple(real(_(rho,0,0)),_(rho,0,1)); };
 
 ::cppqedutils::LogTree label(decltype(expectationValues)) { return {"population","polarization"}; }
 

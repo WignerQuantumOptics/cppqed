@@ -46,7 +46,7 @@ inline Lindblad<1> gain(double gamma_p) {return {"gain", sigmaPlusJump(gamma_p),
 // Lindblad<1> dephasing(double gamma_phi) {return {"dephasing", sigma_zJump(gamma_phi), sigma_zRate(gamma_phi), sigma_zSuperoperator(gamma_phi)};}
 
 
-static constexpr auto expectationValues = [] (lazy_density_operator<1> auto rho)
+inline constexpr auto expectationValues = [] (lazy_density_operator<1> auto rho)
 {
   return hana::make_tuple( slv<"population0">(_(rho,0)), slv<"polarization">(_(rho,0,1)) );
 };

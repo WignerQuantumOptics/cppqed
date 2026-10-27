@@ -12,7 +12,7 @@ using namespace quantumdata;
 
 namespace exact_propagator_ns {
 
-static const struct NoOp {/* LogTree label{"noOp"};*/} noOp;
+inline const struct NoOp {/* LogTree label{"noOp"};*/} noOp;
 
 template <typename H, size_t RANK>
 concept one_time_dependent_functional = requires (const H& h, double t, StateVectorView<RANK> psi) { h(t,psi); };

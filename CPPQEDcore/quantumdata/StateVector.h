@@ -20,9 +20,9 @@ using StorageType = multiarray::StorageType<dcomp>;
 template<typename>
 constexpr auto multiArrayRank_v=std::nullopt;
 
-static const auto noInit = multiarray::noInit<dcomp>;
+inline constexpr auto noInit = multiarray::noInit<dcomp>;
 
-static const auto zeroInit = multiarray::zeroInit<dcomp>;
+inline constexpr auto zeroInit = multiarray::zeroInit<dcomp>;
 
 
 template <typename Derived>

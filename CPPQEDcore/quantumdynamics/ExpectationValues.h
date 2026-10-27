@@ -12,7 +12,7 @@ using namespace quantumdata;
 
 namespace expectation_values_ns {
 
-static const struct NoOp
+inline const struct NoOp
 {
   LogTree label;
   

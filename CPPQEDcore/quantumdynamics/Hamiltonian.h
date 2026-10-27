@@ -19,7 +19,7 @@ concept ode_time_dependent_derivative = requires(const H& h, double t, StateIn p
 
 namespace hamiltonian_ns {
 
-static const struct NoOp {/*LogTree label{"noOp"};*/} noOp;
+inline const struct NoOp {/*LogTree label{"noOp"};*/} noOp;
 
 template <typename H, size_t RANK>
 concept time_independent_functional = ode_time_independent_derivative<H,StateVectorConstView<RANK>,StateVectorView<RANK>>;

@@ -76,7 +76,7 @@ auto _(std::string option, std::string description, const U& defaultValue, T& bi
 }
 
 
-static const struct NoJSON {} noJSON;
+inline const struct NoJSON {} noJSON;
 
 template <typename T, std::convertible_to<T> U>
 auto _(std::string option, std::string description, const U& defaultValue, T& binding, NoJSON)
