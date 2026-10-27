@@ -119,7 +119,7 @@ void superoperatorFromJump(double t, DensityOperatorConstView<RANK> rho, Density
 
   auto unaryIteration=[&] { for (auto& psiTemp : sr) applyJump(jump,t,psiTemp); };
 
-  unaryIteration(); hermitianConjugateSelf(rhoTemp); unaryIteration();
+  unaryIteration(); hermitianConjugateSelf(rhoTemp.mutableView()); unaryIteration();
 
   for (auto& [t,o] : std::views::zip(drhodt.dataView,rhoTemp.dataView) ) t+=o;
 }

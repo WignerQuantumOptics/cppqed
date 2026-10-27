@@ -15,11 +15,12 @@ find_package(Eigen3 3.4 REQUIRED)
 # -DFETCHCONTENT_SOURCE_DIR_CPPQED-MULTIDIAGONAL=../cppqed-multidiagonal
 include(FetchContent)
 
-# An installed library is used when present; 0.3 is the first version with headers in include/multidiagonal/.
+# An installed library is used when present; 0.4 is the first version with twoITimesImagPartOf
+# (headers are in include/multidiagonal/ since 0.3).
 FetchContent_Declare(cppqed-multidiagonal
   GIT_REPOSITORY    https://github.com/WignerQuantumOptics/cppqed-multidiagonal.git
-  GIT_TAG           fd468e84b9354271bb4413f076c67a1e7f968545 # v0.3.0, 2026-10-26
-  FIND_PACKAGE_ARGS 0.3)
+  GIT_TAG           24d651cddade542fa2cb193f3c984463385d4017 # v0.4.0, 2026-10-27
+  FIND_PACKAGE_ARGS 0.4)
 
 # header-only; popl's own CMakeLists (examples, tests) is skipped by pointing SOURCE_SUBDIR at include/
 FetchContent_Declare(popl

@@ -276,7 +276,7 @@ Operations:
 - `operator|` — composition, rank-general: offsets add per axis; colliding offset pairs accumulate into the same diagonal
 - `operator+=` / `-=` — addition: new diagonals may appear; existing ones accumulate element-wise
 - `hermitianConjugate()` — negates all offsets and conjugates the diagonal values
-- `twoTimesRealPartOf` / `twoTimesImagPartOf` — Hermitian/anti-Hermitian combinations
+- `twoTimesRealPartOf` / `twoITimesImagPartOf` — A + A† = 2 Re A (Hermitian) and A − A† = 2i Im A (anti-Hermitian)
 - `multidiagonal::identity(dim)` — constructs identity operator
 - `calculateAndCheckDimensions` — derives and validates Hilbert space dimension from diagonal extents+offsets
 
@@ -535,7 +535,7 @@ Hamiltonian ($H_\text{eff}/i$, complex frequency $z = \kappa(2n_\text{th}+1) - i
 ```cpp
 ham -= z * nOp(cutoff);                     // detuning + decay (complex frequency)
 ham += (omegaKerr/1.i) * (aDag|aDag|a|a);  // Kerr nonlinearity a†a†aa
-ham += twoTimesImagPartOf(eta*aDag);         // coherent drive H = i(η a† − η* a)
+ham += twoITimesImagPartOf(eta*aDag);        // coherent drive H = i(η a† − η* a), so H/i = η a† − η* a
 ```
 The Kerr term `aDag|aDag|a|a` is four chained compositions — impossible with `Tridiagonal`, trivial with `MultiDiagonal`.
 

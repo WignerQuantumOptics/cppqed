@@ -67,7 +67,7 @@ struct Master
 
     // exact propagation
     exact_propagator_ns::broadcast<compileTimeOrdinals<RANK>>(getEx(m.qsd),m.time,m.rho.mutableView(),m.time0,m.rowIterationOffsets_);
-    hermitianConjugateSelf(m.rho);
+    hermitianConjugateSelf(m.rho.mutableView());
     exact_propagator_ns::broadcast<compileTimeOrdinals<RANK>>(getEx(m.qsd),m.time,m.rho.mutableView(),m.time0,m.rowIterationOffsets_);
     conj(m.rho);
     m.time0=m.time;

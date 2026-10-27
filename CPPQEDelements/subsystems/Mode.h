@@ -38,7 +38,7 @@ inline auto hamiltonian(size_t cutoff, dcomp z, double omegaKerr, dcomp eta)
 
   if (abs(z)) ham-=z*nOp(cutoff);
   if (omegaKerr) ham+=(omegaKerr/1.i) * (aDag|aDag|a|a);
-  if (abs(eta)) ham+=twoTimesImagPartOf(eta*aDag);
+  if (abs(eta)) ham+=twoITimesImagPartOf(eta*aDag); // drive H = i(ηa† − η*a), so H/i = ηa† − η*a
 
   return ham;
 }

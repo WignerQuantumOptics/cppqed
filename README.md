@@ -155,7 +155,7 @@ cmake --build build -j$(nproc)
 ctest --test-dir build
 ```
 
-Without network access (e.g. on cluster compute nodes), configure once where the network is available, copy the fetched sources from `build/_deps/*-src`, and point CMake at them: `-DFETCHCONTENT_FULLY_DISCONNECTED=ON -DFETCHCONTENT_SOURCE_DIR_CPPQED-MULTIDIAGONAL=… -DFETCHCONTENT_SOURCE_DIR_POPL=… -DFETCHCONTENT_SOURCE_DIR_PCG-CPP=… -DFETCHCONTENT_SOURCE_DIR_XOSHIRO-CPP=…`, plus `-DFETCHCONTENT_SOURCE_DIR_CATCH2=…` for the tests (or `-DBUILD_TESTING=OFF`). An installed cppqed-multidiagonal ≥ 0.3 is used instead of the fetched one when CMake finds it.
+Without network access (e.g. on cluster compute nodes), configure once where the network is available, copy the fetched sources from `build/_deps/*-src`, and point CMake at them: `-DFETCHCONTENT_FULLY_DISCONNECTED=ON -DFETCHCONTENT_SOURCE_DIR_CPPQED-MULTIDIAGONAL=… -DFETCHCONTENT_SOURCE_DIR_POPL=… -DFETCHCONTENT_SOURCE_DIR_PCG-CPP=… -DFETCHCONTENT_SOURCE_DIR_XOSHIRO-CPP=…`, plus `-DFETCHCONTENT_SOURCE_DIR_CATCH2=…` for the tests (or `-DBUILD_TESTING=OFF`). An installed cppqed-multidiagonal ≥ 0.4 is used instead of the fetched one when CMake finds it.
 
 On Windows, [WSL2](https://learn.microsoft.com/en-us/windows/wsl/) with Ubuntu 24.04 is the recommended environment.
 
