@@ -38,13 +38,13 @@ struct Broadcaster
 
       .superoperator{
         [ o=offsets, matrixOffsets=std::vector<size_t>{}, &l ] (double t, DensityOperatorConstView<RANK> rho, DensityOperatorView<RANK> drhodt) mutable {
-          // matrixOffsets is populated when the lambda is first called
+          // matrixOffsets is populated when the lambda is first called, row offsets fastest as in storage (#90)
           if (!matrixOffsets.size()) {
             matrixOffsets.resize(sqr(o.size()));
             size_t extent=std::lround(std::sqrt(rho.dataView.size()));
             auto i=matrixOffsets.begin();
-            for (auto u=o.begin(); u!=o.end(); ++u )
-              for (auto v=o.begin(); v!=o.end(); (*i++) = (*u) + extent * (*v++) ) ;
+            for (auto v=o.begin(); v!=o.end(); ++v )
+              for (auto u=o.begin(); u!=o.end(); (*i++) = (*u++) + extent * (*v) ) ;
           }
 
           for ( auto&& [rho,drhodt] : std::views::zip( sliceRange<extendedAxes<retainedAxes,RANK>>(rho,matrixOffsets),

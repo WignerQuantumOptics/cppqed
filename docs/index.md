@@ -100,7 +100,7 @@ The core mechanism for acting on subsystems. Given a rank-R array and a compile-
 
 - `filterIn<retainedAxes>(extents/strides)` — projects onto retained axes
 - `filterOut<retainedAxes>(extents/strides)` — projects onto dummy axes
-- `calculateSlicesOffsets` — precomputes all flat storage offsets for dummy index combinations (paid once at initialization)
+- `calculateSlicesOffsets` — precomputes all flat storage offsets for dummy index combinations (paid once at initialization), in memory order: first dummy axis fastest, so that consecutive slices are adjacent in storage (#90)
 - `sliceRange<retainedAxes>(mav)` — returns a lazy range of `MultiArrayView`s of rank `|retainedAxes|`
 - `SliceRangeOwning` / `SliceRangeReferencing` — owns or references the offset vector respectively
 - `transpose` — special case where `|retainedAxes| == RANK`

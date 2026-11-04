@@ -15,7 +15,7 @@ add_library(cppqedTestsHeadersCopy OBJECT unit/testHeaders.cc)
 target_compile_definitions(cppqedTestsHeadersCopy PRIVATE ODR_COPY="2")
 target_link_libraries(cppqedTestsHeadersCopy PRIVATE CPPQED::CPPQEDelements Catch2::Catch2)
 
-add_executable(cppqedTests unit/testOperators.cc unit/testHeaders.cc $<TARGET_OBJECTS:cppqedTestsHeadersCopy>)
+add_executable(cppqedTests unit/testOperators.cc unit/testSlicing.cc unit/testHeaders.cc $<TARGET_OBJECTS:cppqedTestsHeadersCopy>)
 target_link_libraries(cppqedTests PRIVATE CPPQED::CPPQEDelements Catch2::Catch2WithMain)
 
 if(catch2_SOURCE_DIR)

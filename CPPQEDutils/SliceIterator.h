@@ -74,6 +74,8 @@ auto filterOut(Extents<RANK> idx) requires ( std::size(retainedAxes) <= RANK )
 
 /// Calculates the slices offsets purely from the (dummy) extents and strides
 /**
+ * The slices come in the order of storage, first dummy axis fastest, so that consecutive slices lie close in memory (#90).
+ *
  * Any indexing offset that the MultiArrayView might itself have is added at the point of indexing/slicing
  */
 template <auto retainedAxes, size_t RANK>
@@ -81,15 +83,16 @@ auto calculateSlicesOffsets(Extents<RANK> extents, Extents<RANK> strides)
 {
   Extents<RANK-std::size(retainedAxes)>
     dummyExtents{filterOut<retainedAxes>(extents)},
-    dummyStrides{filterOut<retainedAxes>(strides)}, 
+    dummyStrides{filterOut<retainedAxes>(strides)},
     idx; idx.fill(0);
-  
+
   std::vector<size_t> res(multiarray::calculateExtent(dummyExtents));
 
-  for (auto i=res.begin(); i!=res.end(); (
-    *i++ = std::ranges::fold_left_first( std::views::zip(idx,dummyStrides) | std::views::transform( [] (auto ids) {return get<0>(ids)*get<1>(ids);} ) , std::plus{}).value_or(0uz) ,
-    incrementMultiIndex(idx,dummyExtents)));
-    // note: the appearance of idx on both sides of the comma operator cannot cause problems since it ensures left-to-right evaluation order
+  for (size_t& offset : res) {
+    offset = std::ranges::fold_left_first( std::views::zip(idx,dummyStrides) | std::views::transform( [] (auto ids) {return get<0>(ids)*get<1>(ids);} ) , std::plus{}).value_or(0uz);
+    // first index fastest, unlike incrementMultiIndex
+    for (size_t k=0; k<idx.size() && ++idx[k]==dummyExtents[k]; ++k) idx[k]=0;
+  }
 
   return res;
 }
@@ -160,11 +163,12 @@ public:
   SliceIterator& operator=(const SliceIterator&) = default; SliceIterator& operator=(SliceIterator&&) = default;
   
   SliceIterator(Extents<RRANK> e, Extents<RRANK> s, size_t originalOffset, member_iterator i, std::span<T> dv) :
-    iter{i}, originalOffset_{originalOffset}, mav_{e,s,*i,dv} {}
-  
-  auto& operator*() const {return mav_;}
-  
-  SliceIterator& operator++() {mav_.offset=*(++iter)+originalOffset_; return *this;}
+    iter{i}, originalOffset_{originalOffset}, mav_{e,s,originalOffset,dv} {}
+
+  /// The slice’s offset is set here, since on construction and increment `iter` may be the end (#34)
+  auto& operator*() const {mav_.offset=*iter+originalOffset_; return mav_;}
+
+  SliceIterator& operator++() {++iter; return *this;}
   
   member_iterator iter;
 

@@ -126,6 +126,9 @@ cmake --build build --target <executable>
     composites works to any depth.
   - Liouvillians are flat `std::vector<Lindblad<RANK>>`; nest them by broadcast plus
     concatenation.
+  - Slices come in memory order, first dummy axis fastest, so consecutive slices are
+    adjacent in storage (#90). The other order cost every kernel 1.1–2.3×. Keep it,
+    including in the submdspan rebuild (#78).
   - ExactPropagators are not composed: each leaf contributes one, broadcast to the full
     rank.
 - **RNG.** Use `pcg64` with independent stream ordinals for ensembles. **Never use
@@ -149,12 +152,11 @@ Finding IDs (B…) refer to `dev/review-2026-10/findings.md`.
   `QuantumSystemDynamics.h`, `getHa/getLi/getEx`, `hamiltonian_ns::broadcast`. Nothing
   includes them, so the build doesn't notice (B4). Port Master to the `(ha, li, ev[, ex])`
   API that QJMC uses.
-- Once it compiles, three known defects each corrupt it independently (a fourth, library
-  finding F5, `twoTimesRealPartOfSelf` quadrupling the diagonal, arrived fixed with the
-  switch to the library):
+- Once it compiles, two known defects each corrupt it independently (library finding F5,
+  `twoTimesRealPartOfSelf` quadrupling the diagonal, arrived fixed with the switch to the
+  library; B7, the `SliceIterator` first-slice offset, is fixed, #34):
   - B3: `conj(m.rho)` after every step
   - B5: Mode superoperators get √rate instead of rate
-  - B7: the `SliceIterator` first-slice offset
 - **Confirmation:** a driven-qubit Bloch-equation test comparing three results:
   - Master
   - QJMC ensemble
@@ -177,9 +179,8 @@ Other known problems:
     code because template deduction ignores defaults.
 - `quantumdynamics::concatenate` fails with non-constexpr arguments. Concatenate Liouvillians
   manually.
-- `SliceIterator` (B7): the first slice drops the parent view's offset, and every
-  complete loop dereferences one past the end of the offsets. Top-level QJMC is not
-  affected; Master, nested Broadcasters, and `partialTrace` of sliced LDOs are.
+- `Broadcaster` computes its offsets from the extents alone, i.e. for a contiguous array
+  (B9, #36). A Broadcaster nested across ranks on a sub-view touches the wrong elements.
 - Stubs:
   - `compose()` in Hamiltonian.h (interactions across composite boundaries)
   - `broadcastFor`
@@ -212,6 +213,8 @@ Later or under discussion, so **don't start these unasked**:
 `ctest --test-dir build` runs everything; CI runs it on every push.
 - `tests/unit/` (target `cppqedTests`, Catch2 v3 as in the library, SHA-pinned):
   - dense-matrix checks of the subsystem operators
+  - `testSlicing.cc`: slice order, and slicing, broadcasting and `partialTrace` of a view
+    with an offset of its own
   - `testHeaders.cc`, compiled twice as two translation units, so a non-inline
     definition in a framework header fails the link (#51). Keep framework headers
     ODR-clean: `inline` or templates only.
