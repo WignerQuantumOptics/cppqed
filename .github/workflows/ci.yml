@@ -20,11 +20,12 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
-      # system Boost and Eigen, as on the cluster; the source dependencies come via FetchContent
+      # system Boost and Eigen, as on the cluster; the source dependencies come via FetchContent;
+      # jemalloc, which CPPQED_JEMALLOC=AUTO then links (the offline job runs without it)
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build libboost-dev libboost-iostreams-dev libboost-json-dev libboost-serialization-dev libeigen3-dev g++-13 g++-14 clang-18
+          sudo apt-get install -y ninja-build libboost-dev libboost-iostreams-dev libboost-json-dev libboost-serialization-dev libeigen3-dev libjemalloc-dev g++-13 g++-14 clang-18
 
       - name: Configure
         run: >

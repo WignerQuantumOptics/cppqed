@@ -157,6 +157,10 @@ ctest --test-dir build
 
 Without network access (e.g. on cluster compute nodes), configure once where the network is available, copy the fetched sources from `build/_deps/*-src`, and point CMake at them: `-DFETCHCONTENT_FULLY_DISCONNECTED=ON -DFETCHCONTENT_SOURCE_DIR_CPPQED-MULTIDIAGONAL=… -DFETCHCONTENT_SOURCE_DIR_POPL=… -DFETCHCONTENT_SOURCE_DIR_PCG-CPP=… -DFETCHCONTENT_SOURCE_DIR_XOSHIRO-CPP=…`, plus `-DFETCHCONTENT_SOURCE_DIR_CATCH2=…` for the tests (or `-DBUILD_TESTING=OFF`). An installed cppqed-multidiagonal ≥ 0.4 is used instead of the fetched one when CMake finds it.
 
+**Instruction set.** On x86-64 the framework is built for `x86-64-v3` (AVX2 and FMA: Intel since 2013, AMD since about 2015) by default. That makes its vectorized kernels 1.4–1.7× faster than the x86-64 baseline (measured on one machine). Executables check the processor at startup and stop with a message where it doesn't support the level. For older processors use `-DCPPQED_ARCH=x86-64-v2`, or `-DCPPQED_ARCH=` for the compiler's default. `-DCPPQED_ARCH=native` tunes for the build host, so use it only where the compute nodes are the same.
+
+**Memory allocator.** On systems with transparent huge pages set to `always` (`/sys/kernel/mm/transparent_hugepage/enabled`, the default on RHEL-family systems), glibc's allocator places equal-sized arrays allocated back to back almost exactly a multiple of 1 MiB apart when their size is a multiple of 1 MiB. That slows a run down by about 20%, and the kernels by up to 3×. jemalloc avoids this by starting large allocations at varying offsets within a page. CMake links an installed jemalloc into the executables when pkg-config finds it (`-DCPPQED_JEMALLOC=AUTO`, the default; `ON` requires it, `OFF` skips it). Without it, run with `LD_PRELOAD=/path/to/libjemalloc.so.2`, or keep the run off huge pages.
+
 On Windows, [WSL2](https://learn.microsoft.com/en-us/windows/wsl/) with Ubuntu 24.04 is the recommended environment.
 
 ---

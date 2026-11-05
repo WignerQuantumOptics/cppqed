@@ -46,6 +46,14 @@ add_library(CPPQEDutils SHARED
 
 add_library(CPPQED::CPPQEDutils ALIAS CPPQEDutils)
 
+# The startup check of the instruction set (#93), compiled for the x86-64 baseline so that it runs on any x86-64 processor.
+# It lives here because every other library of the framework depends on this one, so it runs before their code.
+if (CPPQED_ARCH MATCHES "^x86-64-v[234]$")
+  target_sources(CPPQEDutils PRIVATE InstructionSetCheck.cc)
+  set_source_files_properties(InstructionSetCheck.cc PROPERTIES
+                              COMPILE_OPTIONS -march=x86-64 COMPILE_DEFINITIONS "CPPQED_ARCH=\"${CPPQED_ARCH}\"")
+endif ()
+
 target_link_libraries(CPPQEDutils PUBLIC ThirdParty cppqed::multidiagonal Boost::json Boost::serialization Eigen3::Eigen)
 
 install(TARGETS CPPQEDutils DESTINATION lib)

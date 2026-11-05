@@ -72,6 +72,15 @@ cmake --build build --target <executable>
 - Compile as C++23, which the multidiagonal headers require.
 - Expect long template-heavy builds. Build single targets rather than `all` while
   iterating.
+- `CPPQED_ARCH` (#93): `-march` level, `x86-64-v3` by default on x86-64, empty elsewhere.
+  `CPPQEDutils/InstructionSetCheck.cc` is compiled for the baseline and stops executables
+  with a message on processors without the level (checked for `x86-64-v2`…`v4` only).
+  AVX2 makes the kernels 1.4–1.7× faster than the baseline (library performance page).
+- `CPPQED_JEMALLOC` (AUTO/ON/OFF, cppqed-multidiagonal#26): links an installed jemalloc,
+  found with pkg-config, directly into the executables in `examples/`. On transparent huge
+  pages glibc's allocator places equal-sized state arrays at a slow distance (about 20% on a
+  run); jemalloc avoids it. CI installs it in the build matrix (AUTO path) but not in the
+  offline job (fallback path).
 
 ## Design principles: preserve these in every change
 

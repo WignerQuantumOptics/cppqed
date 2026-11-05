@@ -85,6 +85,48 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL Clang AND ${CMAKE_CXX_COMPILER_VERSION} VE
   message(FATAL_ERROR "Clang version >= ${CLANG_MINIMAL} needed.")
 endif ()
 
+# ### Instruction set (#93)
+# On x86-64, x86-64-v3 (AVX2 and FMA: Intel since 2013, AMD since about 2015) by default: the vectorized kernels are
+# 1.4–1.7× faster than on the x86-64 baseline. Executables check the processor at startup (CPPQEDutils/InstructionSetCheck.cc).
+# "native" tunes for the build host, which is risky where login and compute nodes differ; an empty value gives the baseline.
+
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64|amd64)$")
+  set(CPPQED_ARCH_DEFAULT x86-64-v3)
+else ()
+  set(CPPQED_ARCH_DEFAULT "")
+endif ()
+set(CPPQED_ARCH "${CPPQED_ARCH_DEFAULT}" CACHE STRING "Instruction-set level, passed as -march= (empty: the compiler's default)")
+
+if (CPPQED_ARCH)
+  add_compile_options(-march=${CPPQED_ARCH})
+  message(STATUS "Instruction set: -march=${CPPQED_ARCH}")
+else ()
+  message(STATUS "Instruction set: the compiler's default")
+endif ()
+
+# ### Memory allocator (cppqed-multidiagonal#26)
+# On transparent huge pages set to "always", glibc places equal-sized arrays allocated back to back almost exactly a multiple
+# of 1 MiB apart when their size is one, which slows the kernels down by up to 3× (jc_qjmc: 1.2×). jemalloc starts large
+# allocations at varying offsets within a page and avoids that. AUTO links an installed jemalloc, found with pkg-config,
+# into the executables; ON requires it.
+
+set(CPPQED_JEMALLOC AUTO CACHE STRING "Link jemalloc into the executables: AUTO, ON or OFF")
+set_property(CACHE CPPQED_JEMALLOC PROPERTY STRINGS AUTO ON OFF)
+
+if (NOT CPPQED_JEMALLOC STREQUAL OFF)
+  find_package(PkgConfig QUIET)
+  if (PkgConfig_FOUND)
+    pkg_check_modules(JEMALLOC QUIET IMPORTED_TARGET jemalloc)
+  endif ()
+  if (JEMALLOC_FOUND)
+    message(STATUS "Memory allocator: jemalloc ${JEMALLOC_VERSION}")
+  elseif (CPPQED_JEMALLOC STREQUAL ON)
+    message(FATAL_ERROR "CPPQED_JEMALLOC=ON, but pkg-config finds no jemalloc")
+  else ()
+    message(STATUS "Memory allocator: the system's (no jemalloc found)")
+  endif ()
+endif ()
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
 include(GetGitRevisionDescription)
