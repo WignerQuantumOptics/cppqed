@@ -33,6 +33,8 @@ License: BSL-1.0. Developer Guide: `docs/`, published at https://wignerquantumop
     `-DFETCHCONTENT_SOURCE_DIR_CPPQED-MULTIDIAGONAL=../cppqed-multidiagonal`.
   - Bumping a pin: update the SHA (and its date comment); the jc_qjmc regression test
     must still pass.
+  - From the library's next release on, an installed 0.y.z accepts only a request for 0.y
+    (cppqed-multidiagonal#9). So a pin to a new minor version also bumps `FIND_PACKAGE_ARGS`.
 - Cluster compute nodes have no outbound network, so builds there must work offline with
   system Boost and Eigen: `FETCHCONTENT_FULLY_DISCONNECTED=ON` plus
   `FETCHCONTENT_SOURCE_DIR_<NAME>` for each dependency, pointing at copies of `_deps/*-src`
