@@ -19,7 +19,7 @@ include(FetchContent)
 # (headers are in include/multidiagonal/ since 0.3).
 FetchContent_Declare(cppqed-multidiagonal
   GIT_REPOSITORY    https://github.com/WignerQuantumOptics/cppqed-multidiagonal.git
-  GIT_TAG           a42cccf281f12955322e20f494918ed9cae18ab8 # v0.4.1, 2026-11-04
+  GIT_TAG           9dc7a5a686f057bea214bc84557cffaa80218aa1 # v0.4.2, 2026-11-07
   FIND_PACKAGE_ARGS 0.4)
 
 # header-only; popl's own CMakeLists (examples, tests) is skipped by pointing SOURCE_SUBDIR at include/
