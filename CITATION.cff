@@ -10,6 +10,7 @@ authors:
   - family-names: Vukics
     given-names: András
     affiliation: "HUN-REN Wigner Research Centre for Physics"
+    orcid: "https://orcid.org/0000-0001-8916-4033"
 license: BSL-1.0
 repository-code: "https://github.com/WignerQuantumOptics/cppqed"
 url: "https://wignerquantumoptics.github.io/cppqed/"
