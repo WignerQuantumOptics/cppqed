@@ -5,7 +5,13 @@ message(STATUS "Configuring CPPQEDutils")
 # ### Library detection
 find_package(Boost ${BOOST_MINIMAL} REQUIRED COMPONENTS iostreams json serialization)
 
-find_package(Eigen3 3.4 REQUIRED)
+# Eigen ≥ 3.4, checked after find_package rather than requested in it: Eigen's package version file accepts only its
+# own major version, so a request for 3.4 rejects Eigen 5 (#92). cppqed-multidiagonal asks for no version either.
+find_package(Eigen3 REQUIRED NO_MODULE)
+if (Eigen3_VERSION VERSION_LESS 3.4)
+  message(FATAL_ERROR "Eigen >= 3.4 needed, found ${Eigen3_VERSION}")
+endif ()
+message(STATUS "Eigen ${Eigen3_VERSION}")
 
 # ### Source dependencies, pinned to full commit SHAs
 #
