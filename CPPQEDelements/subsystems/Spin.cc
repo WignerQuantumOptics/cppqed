@@ -1,8 +1,10 @@
-// Copyright András Vukics 2006–2023. Distributed under the Boost Software License, Version 1.0. (See accompanying file LICENSE.txt)
+// Copyright András Vukics 2006–2026. Distributed under the Boost Software License, Version 1.0. (See accompanying file LICENSE.txt)
 #include "Spin.h"
 
 
 using namespace quantumdynamics;
+
+namespace md = ::quantumoperator::multidiagonal;
 
 
 void decideDimension(size_t twoS, size_t& dim) {dim = (dim && dim<twoS+1) ? dim : twoS+1;}
@@ -10,15 +12,10 @@ void decideDimension(size_t twoS, size_t& dim) {dim = (dim && dim<twoS+1) ? dim 
 
 spin::MultiDiagonal spin::splus(size_t twoS, size_t dim)
 {
-  MultiDiagonal res;
   decideDimension(twoS,dim);
-  res.diagonals.emplace( MultiDiagonal::Offsets{-1}, multiarray::fromStorage( [=] { // S⁺ raises m: lower
-    auto res{noInit(dim-1)};
-    // i=m+s (m is the magnetic quantum number)
-    for (size_t i=0; i<res.size(); ++i) res[i]=sqrt((twoS-i)*(i+1.));
-    return res;
-  } () ) );
-  return res;
+  std::vector<dcomp> values(dim-1);
+  for (size_t i=0; i<values.size(); ++i) values[i]=sqrt((twoS-i)*(i+1.)); // i=m+s (m is the magnetic quantum number)
+  return md::diagonal(-1,std::move(values)); // S⁺ raises m: lower
 }
 
 
@@ -30,15 +27,10 @@ spin::MultiDiagonal spin::sy(size_t twoS, size_t dim) {return (splus(twoS,dim)-s
 
 spin::MultiDiagonal spin::sz(size_t twoS, size_t dim)
 {
-  MultiDiagonal res;
   decideDimension(twoS,dim);
-  res.diagonals.emplace( MultiDiagonal::Offsets{0}, multiarray::fromStorage( [=] {
-    auto res{noInit(dim)};
-    // i=m+s (m is the magnetic quantum number)
-    for (size_t i=0; i<res.size(); ++i) res[i]=i-twoS/2.;
-    return res;
-  } () ) );
-  return res;
+  std::vector<dcomp> values(dim);
+  for (size_t i=0; i<values.size(); ++i) values[i]=i-twoS/2.; // i=m+s (m is the magnetic quantum number)
+  return md::diagonal(0,std::move(values));
 }
 
 

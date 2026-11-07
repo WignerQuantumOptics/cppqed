@@ -1,4 +1,4 @@
-// Copyright András Vukics 2006–2023. Distributed under the Boost Software License, Version 1.0. (See accompanying file LICENSE.txt)
+// Copyright András Vukics 2006–2026. Distributed under the Boost Software License, Version 1.0. (See accompanying file LICENSE.txt)
 #include "Mode.h"
 
 #include <boost/math/special_functions/factorials.hpp>
@@ -6,18 +6,14 @@
 
 using namespace quantumdynamics;
 
+namespace md = ::quantumoperator::multidiagonal;
+
 
 mode::MultiDiagonal mode::aOp(size_t cutoff)
 {
-  MultiDiagonal res;
-  res.diagonals.emplace(MultiDiagonal::Offsets{+1},multiarray::fromStorage( [c=cutoff] {
-    // TODO: pending support of std::ranges::to, the following solution will be possible:
-    // return std::ranges::to<MultiDiagonal::Diagonal::StorageType>(std::views::iota(0uz, c-1) | std::views::transform([] (size_t num) -> dcomp { return std::sqrt(num+1); }));
-    auto res{noInit(c-1)};
-    for (size_t i=0; i<res.size(); ++i) res[i]=sqrt(double(i+1));
-    return res;
-  } () ) );
-  return res;
+  std::vector<dcomp> values(cutoff-1);
+  for (size_t n=0; n<values.size(); ++n) values[n]=sqrt(double(n+1));
+  return md::diagonal(+1,std::move(values)); // ⟨n|a|n+1⟩ = √(n+1): upper
 }
 
 

@@ -1,8 +1,10 @@
-// Copyright András Vukics 2006–2023. Distributed under the Boost Software License, Version 1.0. (See accompanying file LICENSE.txt)
+// Copyright András Vukics 2006–2026. Distributed under the Boost Software License, Version 1.0. (See accompanying file LICENSE.txt)
 #include "Qbit.h"
 
 
 using namespace cppqedutils; using namespace quantumdynamics;
+
+namespace md = ::quantumoperator::multidiagonal;
 
 
 UnaryDiagonalPropagator<> qbit::propagator(dcomp z)
@@ -36,24 +38,14 @@ TimeIndependentRate<1> qbit::sigmaPlusRate(double gamma_p) {return [=] (StateVec
 
 
 
-qbit::multidiagonal::MultiDiagonal qbit::multidiagonal::splus()
-{
-  MultiDiagonal res;
-  res.diagonals.emplace( MultiDiagonal::Offsets{-1}, multiarray::fromStorage( [=] {auto res{noInit(1)}; res[0]=1; return res;} () ) ); // σ⁺ = |1⟩⟨0|: lower
-  return res;
-}
+qbit::multidiagonal::MultiDiagonal qbit::multidiagonal::splus() {return md::diagonal(-1,{1.});} // σ⁺ = |1⟩⟨0|: lower
 
 qbit::multidiagonal::MultiDiagonal qbit::multidiagonal::sminus() {return hermitianConjugateOf(splus());}
 
 qbit::multidiagonal::MultiDiagonal qbit::multidiagonal::sx() {return (splus()+sminus())/2;}
 qbit::multidiagonal::MultiDiagonal qbit::multidiagonal::sy() {return (splus()-sminus())/2i;}
 
-qbit::multidiagonal::MultiDiagonal qbit::multidiagonal::sz()
-{
-  MultiDiagonal res;
-  res.diagonals.emplace( MultiDiagonal::Offsets{0}, multiarray::fromStorage( [=] {auto res{noInit(2)}; res[0]=-.5; res[1]=.5; return res;} () ) ); // as spin ½: |1⟩ is up (#87)
-  return res;
-}
+qbit::multidiagonal::MultiDiagonal qbit::multidiagonal::sz() {return md::diagonal(0,{-.5,.5});} // as spin ½: |1⟩ is up (#87)
 
 
 StateVector<1> qbit::init(dcomp psi1)

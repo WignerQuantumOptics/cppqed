@@ -250,6 +250,9 @@ textbook commutators.
 
 - camelCase. Keep established physics abbreviations (`dcomp`, `noInit`). Use `FWD(x)`.
   Use `slv<"label">(v)` for labelled output values.
+- Build operators with `quantumoperator::multidiagonal::diagonal(offset, values)` (alias `md`)
+  combined by `+`, `|`, `*`, as Mode, Qbit and Spin do (library #15); emplace into `diagonals`
+  only for coefficients that don't factorize over the axes.
 - Doxygen `///` comments. Each file starts with a copyright plus BSL-1.0 line.
 - Use physics language in docs and comments ("quanta moved", "phase belongs to the
   diagonal"), not group-theory vocabulary. κ may be set to 1 as the natural unit.
