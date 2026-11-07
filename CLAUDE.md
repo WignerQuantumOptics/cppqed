@@ -28,12 +28,12 @@ License: BSL-1.0. Developer Guide: `docs/`, published at https://wignerquantumop
 - Source dependencies come through **FetchContent pinned to full commit SHAs**
   (`CPPQEDutils/CMakeLists.txt`): cppqed-multidiagonal, and the upstream popl, pcg-cpp and
   Xoshiro-cpp. There are no submodules any more.
-  - An installed cppqed-multidiagonal ≥ 0.4 is preferred when found (`FIND_PACKAGE_ARGS`).
+  - An installed cppqed-multidiagonal 0.5.x is preferred when found (`FIND_PACKAGE_ARGS`).
   - Co-development against a sibling checkout:
     `-DFETCHCONTENT_SOURCE_DIR_CPPQED-MULTIDIAGONAL=../cppqed-multidiagonal`.
   - Bumping a pin: update the SHA (and its date comment); the jc_qjmc regression test
     must still pass.
-  - From the library's next release on, an installed 0.y.z accepts only a request for 0.y
+  - Since the library's v0.5.0, an installed 0.y.z accepts only a request for 0.y
     (cppqed-multidiagonal#9). So a pin to a new minor version also bumps `FIND_PACKAGE_ARGS`.
 - Cluster compute nodes have no outbound network, so builds there must work offline with
   system Boost and Eigen: `FETCHCONTENT_FULLY_DISCONNECTED=ON` plus

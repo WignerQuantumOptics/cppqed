@@ -21,12 +21,12 @@ message(STATUS "Eigen ${Eigen3_VERSION}")
 # -DFETCHCONTENT_SOURCE_DIR_CPPQED-MULTIDIAGONAL=../cppqed-multidiagonal
 include(FetchContent)
 
-# An installed library is used when present; 0.4 is the first version with twoITimesImagPartOf
-# (headers are in include/multidiagonal/ since 0.3).
+# An installed 0.5.x is used when present: since 0.5, the installed package accepts only requests for its own minor
+# version while 0.x (library #9), so a pin to a new minor version bumps FIND_PACKAGE_ARGS too.
 FetchContent_Declare(cppqed-multidiagonal
   GIT_REPOSITORY    https://github.com/WignerQuantumOptics/cppqed-multidiagonal.git
-  GIT_TAG           9dc7a5a686f057bea214bc84557cffaa80218aa1 # v0.4.2, 2026-11-07
-  FIND_PACKAGE_ARGS 0.4)
+  GIT_TAG           147c7ac45a6a45e2d038ddb846653a8f30feef67 # v0.5.0, 2026-11-07
+  FIND_PACKAGE_ARGS 0.5)
 
 # header-only; popl's own CMakeLists (examples, tests) is skipped by pointing SOURCE_SUBDIR at include/
 FetchContent_Declare(popl
