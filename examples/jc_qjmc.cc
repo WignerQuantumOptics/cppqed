@@ -40,7 +40,7 @@ int main(int argc, const char* argv[])
   auto psiQ = qbit::init(pq);
   auto psiM = mode::init(pm);
 
-  StateVector<2> psi{ psiQ * psiM };
+  StateVector<2> psi{ psiQ % psiM };
 
   // ─── Broadcasters ─────────────────────────────────────────────────────
 

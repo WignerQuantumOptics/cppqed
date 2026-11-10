@@ -102,7 +102,7 @@ int main(int argc, const char* argv[])
   add(op, parameters::_("g", "Jaynes-Cummings coupling", 1., g));
   parse(op, argc, argv);
 
-  StateVector<2> psi{ qbit::init(pq) * mode::init(pm) };
+  StateVector<2> psi{ qbit::init(pq) % mode::init(pm) };
 
   Broadcaster<2,0> bQ{psi.extents};
   Broadcaster<2,1> bM{psi.extents};

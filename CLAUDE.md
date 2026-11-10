@@ -254,6 +254,7 @@ textbook commutators.
   combined by `+`, `*` (composition) and `%` (direct product), as Mode, Qbit and Spin do (library #15;
   spelling #30, library v0.6.0: before, composition was `|` and the direct product `*`). Scalars multiply
   with `*` too. Emplace into `diagonals` only for coefficients that don't factorize over the axes.
+- The direct product of states is `psi1 % psi2` too (#94); `*` with a state is only scalar multiplication.
 - Doxygen `///` comments. Each file starts with a copyright plus BSL-1.0 line.
 - Use physics language in docs and comments ("quanta moved", "phase belongs to the
   diagonal"), not group-theory vocabulary. κ may be set to 1 as the natural unit.

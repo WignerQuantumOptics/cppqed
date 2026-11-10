@@ -134,9 +134,9 @@ auto dyad(const StateVector<RANK>& sv1, const StateVector<RANK>& sv2)
 }
 
 
-/// Creates the direct product, relying on the direct-product constructor
+/// Direct product \f$\psi_1\otimes\psi_2\f$, spelled `psi1 % psi2` as for operators (cppqed-multidiagonal#30, #94); the axes of @p psi1 come first
 template<size_t RANK1, size_t RANK2>
-inline auto operator*(const StateVector<RANK1>& psi1, const StateVector<RANK2>& psi2)
+inline auto operator%(const StateVector<RANK1>& psi1, const StateVector<RANK2>& psi2)
 {
   return StateVector<RANK1+RANK2>(directProduct<RANK1,RANK2>(psi1,psi2));
 }

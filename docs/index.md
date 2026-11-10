@@ -708,7 +708,7 @@ int main(int argc, const char* argv[])
   parse(op, argc, argv);
 
   // Initial state: rank-2 tensor product psi_ij = psiQ_i * psiM_j
-  StateVector<2> psi{ qbit::init(pq) * mode::init(pm) };
+  StateVector<2> psi{ qbit::init(pq) % mode::init(pm) };
 
   // Broadcasters: lift rank-1 descriptors to rank-2
   Broadcaster<2,0> bQ{psi.extents};  // qubit on axis 0
@@ -740,7 +740,7 @@ int main(int argc, const char* argv[])
 **Key observations:**
 - The entire composite system is assembled in ~10 lines of substantive code
 - `Pars` instances registered directly into `op` — no custom struct needed
-- `operator*` builds the rank-2 tensor product initial state from rank-1 subsystem states
+- `operator%` builds the rank-2 tensor product initial state from rank-1 subsystem states (the direct product, spelled `%` for states as for operators, #94)
 - `Broadcaster` does all axis-embedding; `JaynesCummings` slots in as a third Hana element
 - `quantumdynamics::concatenate` bypassed due to constexpr bug — manual `push_back` used instead
 - `trajectory::observerNoOp` must be passed explicitly (template deduction limitation)
@@ -1058,7 +1058,7 @@ axis 0 = qubit  (dim 2, always)   ← static prefix
 axis 1 = mode   (dim cutoff, ?)   ← dynamic suffix
 ```
 
-`qbit::init` returns `StateVector<1, 2>`; `mode::init` returns `StateVector<1>`. The tensor product `operator*` concatenates static dim lists:
+`qbit::init` returns `StateVector<1, 2>`; `mode::init` returns `StateVector<1>`. The tensor product `operator%` concatenates static dim lists:
 
 ```
 StateVector<1, 2>  ⊗  StateVector<1>  →  StateVector<2, 2>
@@ -1101,7 +1101,7 @@ The leading-dimensions design is **not** a global compile-time guarantee that pr
 
 - **SubSystem-level operations**: operator application, expectation values, and propagators computed directly on rank-1 (or low-rank) subsystem slices
 - **Order-preserving slicing** (`retainedAxes` a strictly increasing subsequence of `{0,...,RANK-1}`) — the natural case for subsystem extraction
-- **Leading subsystems in `operator*` composition** — the static prefix accumulates correctly as long as static-dimension subsystems are composed first
+- **Leading subsystems in `operator%` direct products** — the static prefix accumulates correctly as long as static-dimension subsystems are composed first
 
 The benefit does **not** propagate through:
 - Any `Broadcaster` over a dynamic-axis subsystem — that branch becomes fully dynamic immediately
@@ -1135,7 +1135,7 @@ For now, the design intent should be recorded in header comments: `Qbit.h` shoul
 | No per-axis combinatorics | ✓ Single split point `N_static` |
 | Backward compatible | ✓ Empty `StaticDims...` = current design |
 | Matches physical composition order | ✓ Fixed-dim subsystems on leading axes |
-| `operator*` concatenation rule | ✓ Well-defined, enforces convention as type rule |
+| `operator%` concatenation rule | ✓ Well-defined, enforces convention as type rule |
 | Propagates through arbitrary `retainedAxes` | ✗ Transpositions crossing static/dynamic boundary drop to fully dynamic |
 | Global compile-time guarantee | ✗ Local to SubSystem level and order-preserving slices |
 | Benefit for primary use case (large oscillator) | Indirect — qubit ops gain; mode hot loop unchanged |
