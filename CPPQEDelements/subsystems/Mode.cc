@@ -25,7 +25,7 @@ mode::MultiDiagonal mode::aDagOp(size_t cutoff)
 
 mode::MultiDiagonal mode::nOp(size_t cutoff)
 {
-  return aDagOp(cutoff) | aOp(cutoff);
+  return aDagOp(cutoff) * aOp(cutoff);
 }
 
 

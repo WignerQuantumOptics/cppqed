@@ -28,7 +28,7 @@ License: BSL-1.0. Developer Guide: `docs/`, published at https://wignerquantumop
 - Source dependencies come through **FetchContent pinned to full commit SHAs**
   (`CPPQEDutils/CMakeLists.txt`): cppqed-multidiagonal, and the upstream popl, pcg-cpp and
   Xoshiro-cpp. There are no submodules any more.
-  - An installed cppqed-multidiagonal 0.5.x is preferred when found (`FIND_PACKAGE_ARGS`).
+  - An installed cppqed-multidiagonal 0.6.x is preferred when found (`FIND_PACKAGE_ARGS`).
   - Co-development against a sibling checkout:
     `-DFETCHCONTENT_SOURCE_DIR_CPPQED-MULTIDIAGONAL=../cppqed-multidiagonal`.
   - Bumping a pin: update the SHA (and its date comment); the jc_qjmc regression test
@@ -207,7 +207,7 @@ Other known problems:
    - The kinetic propagator `exp(−i ω_rec k_j² τ)` becomes a `UnaryDiagonalPropagator`.
    - `expINKX(nK, dim)` becomes a single-diagonal MultiDiagonal at offset `+nK`, and
      `cos`/`sin` follow from it.
-   - The 80-line `mfComposition` table is replaced by `operator|`.
+   - The 80-line `mfComposition` table is replaced by composition, `operator*`.
 3. Restore autostop (`hana::for_each` over the TDP, or flatten it to
    `valarray<double>`).
 4. Re-verify the master equation (Bloch test above).
@@ -251,8 +251,9 @@ textbook commutators.
 - camelCase. Keep established physics abbreviations (`dcomp`, `noInit`). Use `FWD(x)`.
   Use `slv<"label">(v)` for labelled output values.
 - Build operators with `quantumoperator::multidiagonal::diagonal(offset, values)` (alias `md`)
-  combined by `+`, `|`, `*`, as Mode, Qbit and Spin do (library #15); emplace into `diagonals`
-  only for coefficients that don't factorize over the axes.
+  combined by `+`, `*` (composition) and `%` (direct product), as Mode, Qbit and Spin do (library #15;
+  spelling #30, library v0.6.0: before, composition was `|` and the direct product `*`). Scalars multiply
+  with `*` too. Emplace into `diagonals` only for coefficients that don't factorize over the axes.
 - Doxygen `///` comments. Each file starts with a copyright plus BSL-1.0 line.
 - Use physics language in docs and comments ("quanta moved", "phase belongs to the
   diagonal"), not group-theory vocabulary. κ may be set to 1 as the natural unit.

@@ -268,12 +268,13 @@ using Diagonal = MultiArray<dcomp,RANK>;      // the actual diagonal values
 std::map<Offsets, Diagonal> diagonals;        // ordered: deterministic accumulation order
 ```
 
-The key of a diagonal is the number of quanta it moves along each axis. A diagonal at offset $d$ on an axis of dimension $N$ has length $N-|d|$ along that axis, stored as `d[k] = A(k+d⁻, k+d⁺)`. Subsystem operators are built directly into the map, e.g. `res.diagonals.emplace(Offsets{+1}, multiarray::fromStorage(v))` for the ladder operator $a$; σ⁺ = |1⟩⟨0| is the **lower** diagonal, `Offsets{-1}`.
+The key of a diagonal is the number of quanta it moves along each axis. A diagonal at offset $d$ on an axis of dimension $N$ has length $N-|d|$ along that axis, stored as `d[k] = A(k+d⁻, k+d⁺)`. Subsystem operators are built from single diagonals, `multidiagonal::diagonal(offset, values)`, combined by `+`, `*` (composition) and `%` (direct product) (library #15, #30), e.g. `md::diagonal(+1, v)` for the ladder operator $a$; σ⁺ = |1⟩⟨0| is the **lower** diagonal, offset −1.
 
 Operations:
 - `operator()` — application with accumulate semantics: `dpsidt += A psi`, iterating over each diagonal's valid index range
-- `operator*` — direct product: concatenates the `Offsets` arrays, takes `directProduct` of the `Diagonal` arrays
-- `operator|` — composition, rank-general: offsets add per axis; colliding offset pairs accumulate into the same diagonal
+- `operator*` — composition $AB$, rank-general: offsets add per axis; colliding offset pairs accumulate into the same diagonal
+- `operator%` — direct product $A\otimes B$: concatenates the `Offsets` arrays, takes `directProduct` of the `Diagonal` arrays
+- `c * A` — scalar multiplication. `*` and `%` share multiplicative precedence and bind more tightly than `+` (library #30, v0.6.0; before, composition was `|` and the direct product `*`)
 - `operator+=` / `-=` — addition: new diagonals may appear; existing ones accumulate element-wise
 - `hermitianConjugate()` — negates all offsets and conjugates the diagonal values
 - `twoTimesRealPartOf` / `twoITimesImagPartOf` — A + A† = 2 Re A (Hermitian) and A − A† = 2i Im A (anti-Hermitian)
@@ -293,7 +294,7 @@ MultiDiagonal<RANK> alpha;  // static complex coefficients
 MultiDiagonal<RANK> freqs;  // same sparsity structure, complex frequency values
 ```
 
-with `operator()` evaluating `alpha(idx) * exp(freqs(idx) * t)` lazily. Composition of a `(alpha, freqs)` pair follows naturally: `alpha` composes via `operator|`, and `freqs` composes additively ($\delta_\text{result} = \delta_a + \delta_b$, from $e^{\delta_a t} \cdot e^{\delta_b t} = e^{(\delta_a+\delta_b)t}$). This pair lives one level up from `MultiDiagonal`, in the physics layer (CPPQEDelements), not in the mathematical library.
+with `operator()` evaluating `alpha(idx) * exp(freqs(idx) * t)` lazily. Composition of a `(alpha, freqs)` pair follows naturally: `alpha` composes via `operator*`, and `freqs` composes additively ($\delta_\text{result} = \delta_a + \delta_b$, from $e^{\delta_a t} \cdot e^{\delta_b t} = e^{(\delta_a+\delta_b)t}$). This pair lives one level up from `MultiDiagonal`, in the physics layer (CPPQEDelements), not in the mathematical library.
 
 ### 4.4 quantumtrajectory layer
 
@@ -528,16 +529,16 @@ Operators via `MultiDiagonal` — closure under composition pays off immediately
 ```cpp
 aOp(cutoff)    // annihilation: superdiagonal with sqrt(n+1)
 aDagOp(cutoff) // creation: hermitianConjugateOf(aOp)
-nOp(cutoff)    // number: aDagOp | aOp  — composition via operator|
+nOp(cutoff)    // number: aDagOp * aOp  — composition via operator*
 ```
 
 Hamiltonian ($H_\text{eff}/i$, complex frequency $z = \kappa(2n_\text{th}+1) - i\delta$):
 ```cpp
 ham -= z * nOp(cutoff);                     // detuning + decay (complex frequency)
-ham += (omegaKerr/1.i) * (aDag|aDag|a|a);  // Kerr nonlinearity a†a†aa
+ham += (omegaKerr/1.i) * (aDag*aDag*a*a);  // Kerr nonlinearity a†a†aa
 ham += twoITimesImagPartOf(eta*aDag);        // coherent drive H = i(η a† − η* a), so H/i = η a† − η* a
 ```
-The Kerr term `aDag|aDag|a|a` is four chained compositions — impossible with `Tridiagonal`, trivial with `MultiDiagonal`.
+The Kerr term `aDag*aDag*a*a` is four chained compositions — impossible with `Tridiagonal`, trivial with `MultiDiagonal`.
 
 Lindblads: `photonLoss(kappa, nTh)`, `photonGain(kappa, nTh)` — each bundles jump, rate, and superoperator.
 
@@ -653,7 +654,7 @@ No frequency information is embedded in these operators — that is the responsi
 
 #### `mfComposition` — eliminated by `MultiDiagonal`
 
-In v2, `mfComposition` was an 80-line switch table computing $f^*(n_1 kx)\cdot g(n_2 kx)$ for all combinations of $\{\sin, \cos, e^+, e^-\}^2$, restricted to the case $|n_1|=|n_2|$ (where the result is tridiagonal). This restriction and the entire table are artifacts of `Tridiagonal`'s lack of closure under composition. In v3, the product of any two `MultiDiagonal` operators is computed by `operator|` — the result has diagonals at all pairwise offset sums, correctly and automatically, with no restriction on $|n_1|$ vs $|n_2|$.
+In v2, `mfComposition` was an 80-line switch table computing $f^*(n_1 kx)\cdot g(n_2 kx)$ for all combinations of $\{\sin, \cos, e^+, e^-\}^2$, restricted to the case $|n_1|=|n_2|$ (where the result is tridiagonal). This restriction and the entire table are artifacts of `Tridiagonal`'s lack of closure under composition. In v3, the product of any two `MultiDiagonal` operators is computed by `operator*` — the result has diagonals at all pairwise offset sums, correctly and automatically, with no restriction on $|n_1|$ vs $|n_2|$.
 
 #### Initial conditions
 
@@ -666,7 +667,7 @@ Three families:
 
 In v2, `expINKX(particle::Ptr, nK)` detected (via `dynamic_cast<const particle::Exact*>`) whether the particle carried an exact propagator, and if so, embedded the corresponding frequency differences into the `Tridiagonal`'s own frequency data. This cross-subsystem coupling is **not reproduced in v3**, and deliberately so. The mechanism introduced a hidden dependency: operator correctness depended on a runtime property of a partner object, with no compile-time enforcement. The v3 architecture places the interaction picture entirely at the trajectory level, so coupling Hamiltonians are written once for the interaction picture and remain correct regardless. The price is that the picture is no longer a self-adapting property of individual operators — it is an explicit, visible property of the trajectory construction. This is the right trade-off.
 
-The `ParticleAlongCavity` and `ParticleOrthogonalToCavity` interactions migrate to v3 as rank-2 `hamiltonian<2>` functionals built from `Broadcaster`-lifted rank-1 operators. The `isSpecialH_` flag and the `addContribution_v` override both become unnecessary — `MultiDiagonal::operator|` handles arbitrary mode function products correctly and generally.
+The `ParticleAlongCavity` and `ParticleOrthogonalToCavity` interactions migrate to v3 as rank-2 `hamiltonian<2>` functionals built from `Broadcaster`-lifted rank-1 operators. The `isSpecialH_` flag and the `addContribution_v` override both become unnecessary — `MultiDiagonal`'s composition `operator*` handles arbitrary mode function products correctly and generally.
 
 ### 6.6 Example: examples/jc_qjmc.cc
 
@@ -771,7 +772,6 @@ int main(int argc, const char* argv[])
 - `broadcastFor` in `SliceIterator.h` — generic functional primitive for applying `f` across matching slices of multiple arrays
 - `compose()` in `Hamiltonian.h` — interaction Hamiltonian composition for binary/composite systems
 - `Placeholder` slicing generalization beyond `RANK==2`
-- `MultiDiagonal operator|` composition — only rank-1 implemented
 - `InitializeEnsembleFromArrayOnlyArchive` for QJMC — just throws; design question unresolved
 - Schrödinger equation trajectory — not yet implemented (`Schrödinger.h` is a 2023 draft that still includes the removed `QuantumSystemDynamics.h`)
 - **Particle / MDoF subsystem** — v2 files reviewed (§6.5), migration not yet started
@@ -815,7 +815,7 @@ For `cppqed-multidiagonal`, the relevant layers are:
 - **`boost/`** (unit tests): natural test cases:
   - `MultiArray`: construction, indexing, move semantics, JSON round-trip, `copyInit` extent mismatch
   - `SliceIterator`: `filterIn`/`filterOut` on known arrays, `calculateSlicesOffsets` against hand-computed values, `sliceRange` iteration count, `transpose` permutation
-  - `MultiDiagonal`: `identity(N) | A == A`, `A | identity(N) == A`, `(A|B)|C == A|(B|C)`, `(A*B)† == A†*B†`, `hermitianConjugateOf(hermitianConjugateOf(A)) == A`, application of `aOp`/`aDagOp`/`nOp` to Fock states against analytic results
+  - `MultiDiagonal`: `identity(N) * A == A`, `A * identity(N) == A`, `(A*B)*C == A*(B*C)`, `(A%B)† == A†%B†`, `hermitianConjugateOf(hermitianConjugateOf(A)) == A`, application of `aOp`/`aDagOp`/`nOp` to Fock states against analytic results
 
 - **`compilefail/`**: a minimal Python script (~50 lines, extracted from v2's `CompileTarget`) for expected-failure-with-message-check tests. Natural targets:
   - Deleted copy constructor/assignment on `MultiArray` and `MultiDiagonal`
